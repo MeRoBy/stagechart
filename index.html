@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>StageChart — Digitális Kotta & Színpadi Audio Munkaállomás</title>
+  <link rel="stylesheet" href="css/style.css?v=11">
+</head>
+<body>
+
+  <!-- =========================================================
+       1. FELSŐ SÁV (TOPBAR)
+       ========================================================= -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="btnToggleSidebar" data-tooltip="Daltár és Listák" title="Daltár és Listák">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span id="syncStatusBadge" style="font-size:11px; font-weight:700; color:var(--accent); display:none; padding:2px 8px; border-radius:10px; background:var(--accent-soft);">LIVE SYNC</span>
+    </div>
+
+    <div class="topbar-center" id="topbarCenter" data-tooltip="Parancssor opciók" title="Parancssor opciók">
+      <div class="topbar-song-title" id="topSongTitle">Amazing Grace</div>
+      <div class="topbar-sub-line" id="topSubLine"></div>
+      <div class="topbar-clock-row" id="topThirdRow">
+        <span id="liveClock">10:20</span>
+        <span class="gig-clock-pill" id="gigClockPill" title="Koncert visszaszámláló">45:00</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="icon-btn" id="btnMoreMenu" data-tooltip="Opciók és Eszközök" title="Opciók és Eszközök">
+        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      </button>
+      <button class="icon-btn" id="btnSaveMenu" data-tooltip="Mentés mint" title="Mentés mint">
+        <svg viewBox="0 0 24 24"><path d="M19 13V6.8a2 2 0 0 0-.6-1.4l-2.8-2.8A2 2 0 0 0 14.2 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><polyline points="7 2 7 8 15 8"/><polyline points="7 22 7 14 13 14"/><path d="M18.4 15.6a1.5 1.5 0 0 1 2.1 2.1L16 22.2l-3 .8.8-3 4.6-4.4z"/></svg>
+      </button>
+      <button class="icon-btn" id="btnShareMenu" data-tooltip="Megosztás" title="Megosztás">
+        <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/><path d="M19 16v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4"/></svg>
+      </button>
+      <button class="icon-btn" id="btnOpenEditor" data-tooltip="Ének szerkesztése" title="Ének szerkesztése">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
+      <button class="icon-btn" id="btnQuickActions" data-tooltip="Gyorsműveletek" title="Gyorsműveletek">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- SZABADKÉZI JEGYZETELÉS LEBEGŐ ESZKÖZTÁR -->
+  <div class="drawing-toolbar" id="drawingToolbar">
+    <span style="font-size:12px; font-weight:700;">Rajzeszköz:</span>
+    <button class="btn-outline" style="padding:4px 10px;" onclick="StageChartUI.setBrush('rgba(250, 204, 21, 0.5)', 16)">Sárga kiemelő</button>
+    <button class="btn-outline" style="padding:4px 10px;" onclick="StageChartUI.setBrush('#ef4444', 3)">Piros toll</button>
+    <button class="btn-outline" style="padding:4px 10px;" onclick="StageChartUI.setBrush('#38bdf8', 3)">Kék toll</button>
+    <button class="btn-outline" style="padding:4px 10px;" onclick="StageChartUI.clearDrawing()">Törlés</button>
+    <button class="btn-primary" style="padding:4px 12px;" onclick="StageChartUI.toggleDrawingMode()">Kész</button>
+  </div>
+
+  <!-- =========================================================
+       2. LENYÍLÓ PANELEK (MORE, SAVE/EXPORT, QUICK ACTIONS)
+       ========================================================= -->
+  <!-- "..." OPCIÓK MENÜ -->
+  <div class="dropdown-panel" id="panelMore" style="right: 165px;">
+    <div class="menu-item" onclick="StageChartUI.openStageToolsModal()">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <div>
+        <div class="menu-item-title">Színpadi & Próbatermi Okos Eszközök</div>
+        <div class="menu-item-sub">Looper, Tempó-edző, Gig Clock, Stage Cues, Live Sync</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.openFormattingScreen(false)">
+      <svg viewBox="0 0 24 24"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+      <div>
+        <div class="menu-item-title">Ének formázása</div>
+        <div class="menu-item-sub">Betűméretek, szakaszok és színek élő testreszabása</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.printCurrentSong()">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <div>
+        <div class="menu-item-title">Nyomtatás</div>
+        <div class="menu-item-sub">Nyomtasd ki vagy mentsd el PDF-ként!</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.openChordDiagramsModal()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+      <div>
+        <div class="menu-item-title">Akkord diagramok</div>
+        <div class="menu-item-sub">Az énekhez tartozó akkord diagramok megjelenítése</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.openTunerModal()">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>
+      <div>
+        <div class="menu-item-title">Kromatikus hangoló</div>
+        <div class="menu-item-sub">Mikrofonos hangszerhangolás és 440 Hz referencia</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.openSettingsScreen()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <div>
+        <div class="menu-item-title">Beállítások</div>
+        <div class="menu-item-sub">Haladó beállítások</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENTÉS MINT MENÜ (Külön a Megosztástól — 2. kép alapján) -->
+  <div class="dropdown-panel compact-action-menu" id="panelExport" style="right: 125px; min-width: 195px; overflow: visible;">
+    <div class="menu-item" onclick="StageChartUI.exportCurrentSong('sbp')">
+      <div class="menu-item-title">SongbookPro</div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.exportCurrentSong('cho')">
+      <div class="menu-item-title">ChordPro</div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.printCurrentSong()">
+      <div class="menu-item-title">PDF dokumentum</div>
+    </div>
+    <div class="menu-item has-submenu">
+      <div class="menu-item-title" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <span>Lista mentése</span>
+        <span style="font-size:11px; opacity:0.75;">▶</span>
+      </div>
+      <div class="flyout-submenu">
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.exportActiveSetlist('sbp')">
+          <div class="menu-item-title">SongbookPro</div>
+        </div>
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.printActiveSetlistSongs()">
+          <div class="menu-item-title">PDF dokumentum</div>
+        </div>
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.printSetlistOverview()">
+          <div class="menu-item-title">Áttekintő lista</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEGOSZTÁS MENÜ (Külön a Mentés mint-től — 2. kép alapján) -->
+  <div class="dropdown-panel compact-action-menu" id="panelShare" style="right: 85px; min-width: 195px; overflow: visible;">
+    <div class="menu-item" onclick="StageChartUI.shareCurrentSong('sbp')">
+      <div class="menu-item-title">SongbookPro</div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.shareCurrentSong('cho')">
+      <div class="menu-item-title">ChordPro</div>
+    </div>
+    <div class="menu-item" onclick="StageChartUI.printCurrentSong()">
+      <div class="menu-item-title">PDF dokumentum</div>
+    </div>
+    <div class="menu-item has-submenu">
+      <div class="menu-item-title" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <span>Lista megosztása</span>
+        <span style="font-size:11px; opacity:0.75;">▶</span>
+      </div>
+      <div class="flyout-submenu">
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.shareActiveSetlist('sbp')">
+          <div class="menu-item-title">SongbookPro</div>
+        </div>
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.printActiveSetlistSongs()">
+          <div class="menu-item-title">PDF dokumentum</div>
+        </div>
+        <div class="menu-item" onclick="event.stopPropagation(); StageChartUI.printSetlistOverview()">
+          <div class="menu-item-title">Áttekintő lista</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GYORSMŰVELETEK PANEL -->
+  <div class="dropdown-panel quick-panel" id="panelQuick">
+    <div class="quick-header">
+      <span>Gyorsműveletek</span>
+      <div style="display:flex; gap:4px;">
+        <button class="icon-btn" style="width:30px;height:30px;" onclick="StageChartUI.resetTranspositionAndCapo()" title="Eredeti hangnem visszaállítása">
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+        <button class="icon-btn" style="width:30px;height:30px;" onclick="StageChartUI.searchSongOnWeb()" title="Webes lejátszó keresés (YouTube / Spotify)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </button>
+        <button class="icon-btn" style="width:30px;height:30px;" onclick="StageChartUI.toggleFullscreen()" title="Teljes képernyő">
+          <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="quick-body">
+      <div class="quick-row">
+        <span>Hangnem:</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="stepper-btn" style="border:1px solid var(--border); border-radius:4px;" onclick="StageChartUI.stepTranspose(-1)">−1</button>
+          <select class="select-clean" id="quickKeySelect"></select>
+          <button class="stepper-btn" style="border:1px solid var(--border); border-radius:4px;" onclick="StageChartUI.stepTranspose(1)">+1</button>
+        </div>
+      </div>
+
+      <div class="quick-row">
+        <span>Kápó:</span>
+        <div class="stepper-group">
+          <button class="stepper-btn" onclick="StageChartUI.setCapo(0)" title="Kápó törlése">✕</button>
+          <div class="stepper-val" id="capoVal">0</div>
+          <button class="stepper-btn" onclick="StageChartUI.changeCapo(-1)">−</button>
+          <button class="stepper-btn" onclick="StageChartUI.changeCapo(1)">+</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:6px;">
+        <button class="btn-outline" style="flex:1; font-size:11.5px; padding:5px 8px;" onclick="StageChartUI.openCapoOptimizerModal()">✨ Kápó-optimalizáló</button>
+        <button class="btn-outline" style="flex:1; font-size:11.5px; padding:5px 8px;" onclick="StageChartUI.openVocalRangeModal()">🎤 Énekes hangnem</button>
+      </div>
+
+      <div>
+        <div style="font-size:14px; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+          <span>Automatikus görgetés sebessége:</span>
+          <strong id="scrollTimeLabel">1:30</strong>
+          <button class="icon-btn" style="width:24px;height:24px;" onclick="StageChartUI.promptCustomScrollDuration()" title="Időtartam kézi megadása">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </button>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:4px;">
+          <span>Lassú</span><span>Gyors</span>
+        </div>
+        <input type="range" class="slider-full" id="scrollSpeedSlider" min="1" max="10" value="4">
+      </div>
+
+      <div class="quick-row">
+        <span>Dalszöveg mód:</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleLyricsOnly">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div class="quick-row">
+        <span>Nashville fokszámok (I-IV-V):</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleNashville">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div class="quick-row">
+        <span>Hangszer nézet:</span>
+        <select class="select-clean" id="instrumentViewSelect" onchange="StageChartUI.changeInstrumentView(this.value)">
+          <option value="full">Teljes kotta</option>
+          <option value="bass">Csak Basszus / Alaphang</option>
+          <option value="vocals">Ének + Szólamkiemelés</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       3. FŐ MUNKATERÜLET (SIDEBAR + KOTTAMEGJELENÍTŐ)
+       ========================================================= -->
+  <div class="workspace">
+    <!-- BAL OLDALI HAMBURGER DALTÁR ÉS LISTÁK -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="icon-btn" id="btnSidebarBack" onclick="StageChartUI.handleSidebarBackBtn()" title="Vissza / Oldalsáv elrejtése">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <span id="sidebarTitle" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Összes ének</span>
+
+        <!-- Normál fejléc ikon (Kitűzés) -->
+        <div id="sidebarHeaderNormalActions" style="display:flex; align-items:center; gap:2px;">
+          <button class="icon-btn" id="btnPinSidebar" onclick="StageChartUI.togglePinSidebar()" title="Oldalsáv rögzítése">
+            <svg viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"/></svg>
+          </button>
+        </div>
+
+        <!-- Setlista részletező fejléc ikonok (4. és 6. kép alapján: Szerkesztés, + Énekek hozzáadása, Fájl import, ... Menü) -->
+        <div id="sidebarHeaderSetlistActions" style="display:none; align-items:center; gap:6px;">
+          <button class="icon-btn" style="width:34px;height:34px;" data-tooltip="Lista címének szerkesztése" onclick="StageChartUI.openEditSetlistModal()" title="Lista címének és dátumának szerkesztése">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </button>
+          <button class="icon-btn" style="width:34px;height:34px;" data-tooltip="Énekek hozzáadása" onclick="StageChartUI.openSetlistSongPickerModal()" title="Énekek hozzáadása a listához (+)">
+            <svg viewBox="0 0 24 24" width="20" height="20"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button class="icon-btn" style="width:34px;height:34px;" data-tooltip="Fájl importálása a listába" onclick="StageChartUI.openSmartImportModal(true)" title="Fájl importálása közvetlenül ebbe a listába">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          </button>
+          <button class="icon-btn" style="width:34px;height:34px;" data-tooltip="Lista opciók" onclick="StageChartUI.toggleSetlistContextMenu(event)" title="Lista opciók (...)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- FŐMENÜ GYORSNAVIGÁCIÓ: Összes ének, Dallista (Setlist), QR-kód olvasó / Csatlakozás -->
+      <div class="sidebar-main-menu-nav" id="sidebarMainMenuNav">
+        <button class="sidebar-menu-btn active" id="btnMenuSongs" onclick="StageChartUI.switchSidebarTab('songs')">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span>Összes ének</span>
+        </button>
+        <button class="sidebar-menu-btn" id="btnMenuSetlists" onclick="StageChartUI.switchSidebarTab('setlists')">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>Dallista (Setlist)</span>
+        </button>
+        <button class="sidebar-menu-btn sync-btn" id="btnMenuSync" onclick="StageChartUI.openFollowerJoinModal()" title="QR-kód olvasó / Csatlakozás zenekarhoz">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>QR Csatlakozás</span>
+        </button>
+      </div>
+
+      <!-- Setlista "..." felugró menü (6. kép alapján) -->
+      <div class="sidebar-popup-menu" id="setlistContextMenu" style="top: 50px; right: 10px;">
+        <div class="sidebar-popup-item" onclick="StageChartUI.exportActiveSetlist('json')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          <span>Megosztás...</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.promptSaveSetlistAs()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          <span>Mentés mint...</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.printActiveSetlistSongs()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Nyomtatás</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.printSetlistOverview()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+          <span>Áttekintő lap nyomtatása</span>
+        </div>
+        <div class="sidebar-popup-item" style="color:var(--danger);" onclick="StageChartUI.deleteActiveSetlist()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          <span>Lista törlése</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.duplicateActiveSetlist()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>Megkettőzés</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.shuffleActiveSetlist()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          <span>Keverés</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.togglePinSidebar(); StageChartUI.closeSidebarPopups();">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"/></svg>
+          <span>Oldalsáv kitűzése</span>
+        </div>
+      </div>
+
+      <!-- Kereső és Rendezés sáv (Csak Összes ének / Összes lista nézetben látszik) -->
+      <div class="search-box" id="sidebarSearchBox">
+        <div class="search-input-wrap">
+          <input type="text" class="search-input" id="songSearchInput" placeholder="Keresés...">
+          <button class="search-clear" id="btnClearSearch">✕</button>
+        </div>
+        <div class="sort-row" id="sidebarSortRow">
+          <span style="display:flex; align-items:center; gap:5px;">
+            Rendezés:
+            <select class="select-clean" id="sidebarSortSelect" style="padding:2px 6px; font-size:12px; font-weight:600;" onchange="StageChartUI.setSortMode(this.value)">
+              <option value="title">Cím (A–Z)</option>
+              <option value="artist">Előadó (A–Z)</option>
+              <option value="key">Hangnem (+ ABC)</option>
+              <option value="recent">Legutóbb hozzáadott</option>
+              <option value="number">Sorszám</option>
+            </select>
+          </span>
+          <span id="songCountLabel">4 ének</span>
+        </div>
+      </div>
+
+      <div class="song-list-container" id="songListContainer"></div>
+
+      <!-- Csoportos kijelölés felugró menü (9. kép alapján) -->
+      <div class="sidebar-popup-menu" id="multiSelectPopupMenu" style="bottom: 98px; right: 10px;">
+        <div class="sidebar-popup-item" onclick="StageChartUI.selectAllSongs()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>Összes kijelölése</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.invertSongSelection()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <span>Kijelölés megfordítása</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.exitMultiSelectMode()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span>Kijelölés befejezése</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.batchEditTagsForSelected()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+          <span>Címkék módosítása</span>
+        </div>
+      </div>
+
+      <!-- Hozzáadás felugró menü (Új ének / Fájl importálása) -->
+      <div class="sidebar-popup-menu" id="sidebarAddPopupMenu" style="bottom: 98px; left: 10px;">
+        <div class="sidebar-popup-item" onclick="StageChartUI.closeSidebarPopups(); StageChartUI.createNewSong();">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Új ének írása</span>
+        </div>
+        <div class="sidebar-popup-item" onclick="StageChartUI.closeSidebarPopups(); StageChartUI.openSmartImportModal(false);">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Kotta / PDF / Fotó / SBPBACKUP importálása...</span>
+        </div>
+      </div>
+
+      <div class="sidebar-add-bar" id="sidebarBottomActionBar">
+        <button class="btn-outline" id="btnSidebarPrimaryAdd" style="font-weight:600; color:var(--accent); border-color:transparent; background:transparent; padding:6px 8px;" onclick="StageChartUI.handleSidebarAdd(event)">Hozzáadás...</button>
+        <div id="multiSelectActionIcons" style="display:none; align-items:center; gap:2px; margin-left:auto;">
+          <button class="icon-btn" style="width:32px;height:32px; color:var(--danger);" onclick="StageChartUI.deleteSelectedSongs()" title="Kijelölt énekek törlése">
+            <svg viewBox="0 0 24 24" style="width:17px;height:17px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+          <button class="icon-btn" style="width:32px;height:32px;" onclick="StageChartUI.exportSelectedSongs()" title="Kijelölt énekek mentése">
+            <svg viewBox="0 0 24 24" style="width:17px;height:17px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          </button>
+          <button class="icon-btn" style="width:32px;height:32px;" onclick="StageChartUI.exportSelectedSongs()" title="Kijelölt énekek megosztása">
+            <svg viewBox="0 0 24 24" style="width:17px;height:17px;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" id="btnMultiSelectMenu" style="margin-left:auto; width:34px; height:34px;" onclick="StageChartUI.handleMultiSelectBtnClick(event)" title="Énekek kijelölése / Csoportos műveletek">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </button>
+      </div>
+
+      <div class="sidebar-tabs">
+        <div class="sidebar-tab active" id="sideTabSongs" onclick="StageChartUI.switchSidebarTab('songs')">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span>Énekek</span>
+        </div>
+        <div class="sidebar-tab" id="sideTabSetlists" onclick="StageChartUI.switchSidebarTab('setlists')">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>Dallista</span>
+        </div>
+        <div class="sidebar-tab" onclick="StageChartUI.openFollowerJoinModal()" title="QR-kód olvasó / Csatlakozás">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>QR Szinkron</span>
+        </div>
+        <div class="sidebar-tab" onclick="StageChartUI.openSettingsScreen()">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Beállítások</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- KÖZÉPSŐ KOTTAMEGJELENÍTŐ -->
+    <main class="main-viewer" id="mainViewer">
+      <!-- Érintési zónák (ha be van kapcsolva) -->
+      <div class="touch-zone-left" onclick="StageChartUI.stepScrollDown(-1)" title="Előző oldal"></div>
+      <div class="touch-zone-right" onclick="StageChartUI.stepScrollDown(1)" title="Következő oldal"></div>
+
+      <!-- Szabadkézi rajz vászon -->
+      <canvas id="drawingCanvas"></canvas>
+
+      <!-- Kotta fejléc -->
+      <div class="sheet-header" id="sheetHeader">
+        <div>
+          <div class="sheet-title" id="sheetTitle">Amazing Grace</div>
+          <div class="sheet-subtitle" id="sheetSubtitle"></div>
+          <div class="sheet-artist" id="sheetArtist">John Newton</div>
+        </div>
+        <div class="sheet-meta-right" id="sheetMetaRight">
+          Hangnem: D
+        </div>
+      </div>
+
+      <!-- Roadmap ugrósáv + Gyors próbatermi eszközök -->
+      <div class="sheet-toolbar-strip">
+        <div class="roadmap-bar" id="roadmapBar" title="Kattints a szakaszhoz ugráshoz"></div>
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <button class="btn-outline" id="btnQuickMemo" style="padding:3px 10px; font-size:11.5px;" onclick="StageChartUI.handleQuickMemo()">🎙 Hangjegyzet</button>
+          <button class="btn-outline" id="btnPlayMemo" style="padding:3px 10px; font-size:11.5px; display:none;" onclick="StageChartUI.playSavedMemo()">▶ Lejátszás</button>
+          <button class="btn-outline" style="padding:3px 10px; font-size:11.5px;" onclick="StageChartUI.promptStageCue()">🚨 Színpadi jelzés</button>
+        </div>
+      </div>
+
+      <!-- Inline akkord diagramok sáv (ha be van kapcsolva) -->
+      <div class="inline-diagrams-strip" id="inlineDiagramsStrip"></div>
+
+      <!-- Kotta törzs (vagy PDF dokumentum) -->
+      <div class="sheet-body-wrapper">
+        <div class="sheet-body" id="sheetBody"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================================================
+       4. BAL ALSÓ AUDIO MUNKAÁLLOMÁS DOCK (PAD + GROOVE + CUE)
+       ========================================================= -->
+  <div class="pad-dock" id="padDock">
+    <button class="pad-trigger-btn" id="btnPadToggle" onclick="StageChartUI.toggleAmbientPad()" title="Kézi indítású Ambient Pad (Fade-in / Fade-out)">
+      <span class="pad-dot"></span>
+      <span id="padBtnLabel">PAD: D</span>
+    </button>
+
+    <label class="btn-outline" style="padding:5px 8px; font-size:12px; cursor:pointer;" title="Saját Pad hangfájlok (.mp3 / .wav) gyors betöltése">
+      📂 <span id="dockPadCountBadge" style="font-size:10.5px;">Synth</span>
+      <input type="file" accept=".mp3,.wav,.ogg,.m4a,.flac,audio/*" multiple style="display:none;" onchange="StageChartUI.handleCustomPadsUpload(event)">
+    </label>
+
+    <div style="display:flex; flex-direction:column; gap:2px; width:82px;">
+      <span style="font-size:10px; color:var(--text-muted);">Pad Hangerő</span>
+      <input type="range" class="slider-full" id="padVolumeSlider" min="0" max="100" value="65">
+    </div>
+
+    <select class="select-clean" id="dockGrooveSelect" style="font-size:12px;" onchange="StageChartUI.changeGrooveStyle(this.value)" title="Metronóm / Dobgép stílus">
+      <option value="click">Klikk</option>
+      <option value="pop8">Pop 8-beat</option>
+      <option value="ballad16">Ballad 16</option>
+      <option value="country">Country</option>
+      <option value="acoustic68">6/8 Akusztikus</option>
+      <option value="bossa">Bossa</option>
+      <option value="swing">Swing</option>
+    </select>
+
+    <button class="btn-outline" style="padding:5px 9px; font-size:11.5px;" onclick="StageChartUI.handleTapTempo()" title="Tap Tempo — Koppints a ritmusra">TAP</button>
+    <button class="btn-outline" style="padding:5px 9px; font-size:11.5px;" onclick="StageChartUI.triggerCueCountIn()" title="Beszámolás a Cue mono csatornán">Cue (1-2-3-4)</button>
+  </div>
+
+  <!-- =========================================================
+       5. JOBB ALSÓ 2x3 ÉLŐ GOMBOK (FAB GRID)
+       ========================================================= -->
+  <div class="fab-grid" id="fabGrid">
+    <button class="fab-btn" onclick="StageChartUI.zoomSheet(1)" oncontextmenu="StageChartUI.zoomSheet(-1); return false;" title="Nagyítás (Jobb klikk: Kicsinyítés)">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
+    <button class="fab-btn" id="fabScroll" onclick="StageChartUI.toggleAutoScroll()" title="Automatikus görgetés indítása / leállítása">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+    <button class="fab-btn" id="fabDraw" onclick="StageChartUI.toggleDrawingMode()" title="Szabadkézi kiemelő / jegyzetelés">
+      <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+    </button>
+    <button class="fab-btn" id="fabMetronome" onclick="StageChartUI.toggleMetronome()" title="Metronóm / Groove Engine indítása">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 5 22 19 22 12 2"/><line x1="12" y1="15" x2="18" y2="6"/></svg>
+    </button>
+    <button class="fab-btn" onclick="StageChartUI.nextSongInLibrary(1)" oncontextmenu="StageChartUI.nextSongInLibrary(-1); return false;" title="Következő ének (Jobb klikk: Előző)">
+      <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="fab-btn" onclick="StageChartUI.stepScrollDown(1)" oncontextmenu="StageChartUI.stepScrollDown(-1); return false;" title="Görgetés lefelé (Jobb klikk: Felfelé)">
+      <svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+    </button>
+  </div>
+
+  <!-- =========================================================
+       6. KÉTOSZLOPOS ÉNEK SZERKESZTÉSE NÉZET (#screenEditor)
+       ========================================================= -->
+  <section class="overlay-screen" id="screenEditor">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" onclick="StageChartUI.closeEditorScreen()" title="Vissza">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+      </div>
+      <div class="topbar-center"><div class="topbar-song-title">Ének szerkesztése</div></div>
+      <div class="topbar-right">
+        <button class="icon-btn" onclick="StageChartUI.saveEditorChanges()" title="Mentés">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="split-layout">
+      <div class="editor-left">
+        <div class="sub-tabs">
+          <div class="sub-tab active" id="tabBtnGeneral" onclick="StageChartUI.switchEditorTab('general')">Általános</div>
+          <div class="sub-tab" id="tabBtnAdvanced" onclick="StageChartUI.switchEditorTab('advanced')">Haladó</div>
+        </div>
+
+        <!-- ÁLTALÁNOS FÜL -->
+        <div class="editor-fields" id="editorTabGeneral">
+          <input type="text" class="line-input" id="editTitle" placeholder="Ének címe" style="font-size:18px; font-weight:600;" oninput="StageChartUI.renderEditorPreview()">
+          <div style="display:grid; grid-template-columns: 1fr auto; gap:16px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <input type="text" class="line-input" id="editAltTitle" placeholder="Alternatív cím" oninput="StageChartUI.renderEditorPreview()">
+              <input type="text" class="line-input" id="editArtist" placeholder="Előadó" oninput="StageChartUI.renderEditorPreview()">
+              <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin-top:2px;">
+                <span>Címkék:</span>
+                <input type="text" class="line-input" id="editTags" placeholder="+ Címke (vesszővel elválasztva)" style="font-size:12.5px;">
+              </div>
+            </div>
+            <div style="font-size:13px; display:flex; flex-direction:column; gap:7px;">
+              <label class="checkbox-row"><input type="radio" name="editFormat" value="over" checked onchange="StageChartUI.handleFormatConvert('over')"> Szöveg Feletti Akkordok</label>
+              <label class="checkbox-row"><input type="radio" name="editFormat" value="chordpro" onchange="StageChartUI.handleFormatConvert('chordpro')"> ChordPro</label>
+              <div style="margin-top:4px;">
+                Eredeti hangnem:
+                <select class="select-clean" id="editKey" onchange="StageChartUI.renderEditorPreview()"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HALADÓ FÜL -->
+        <div class="editor-fields" id="editorTabAdvanced" style="display:none;">
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;">
+            <input type="text" class="line-input" id="editTimeSig" placeholder="Ütemmutató" oninput="StageChartUI.renderEditorPreview()">
+            <input type="number" class="line-input" id="editBpm" placeholder="Tempó (BPM)" oninput="StageChartUI.renderEditorPreview()">
+            <input type="text" class="line-input" id="editDuration" placeholder="Hossz (pl. 3:30)">
+          </div>
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:14px;">
+            <input type="text" class="line-input" id="editOrder" placeholder="Szakaszok sorrendje">
+            <input type="text" class="line-input" id="editNumber" placeholder="Dal sorszáma">
+          </div>
+          <input type="text" class="line-input" id="editCopyright" placeholder="Szerzői jogi információk">
+          <input type="text" class="line-input" id="editWebsite" placeholder="Weboldal címe (pl. YouTube / Spotify link)">
+        </div>
+
+        <!-- GYORSBESZÚRÓ SÁV: CSAK SZAKASZOK (1. kép alapján: Akkordok nélkül, kibővített szakasz-gombokkal) -->
+        <div class="quick-insert-bar" id="editorInsertBar">
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Intro:\n')">Intro</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Verse 1:\n')">Verse 1</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Verse 2:\n')">Verse 2</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Verse 3:\n')">Verse 3</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Pre-Chorus:\n')">Pre-Chorus</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Chorus:\n')">Chorus</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Bridge:\n')">Bridge</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Interlude:\n')">Interlude</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Instrumental:\n')">Instrumental</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Solo:\n')">Solo</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Tag:\n')">Tag</button>
+          <button class="insert-chip" onclick="StageChartUI.insertAtCursor('Outro:\n')">Outro</button>
+          <button class="insert-chip" style="margin-left:auto; color:var(--text-muted);" onclick="document.execCommand('undo')" title="Visszavonás">↶</button>
+        </div>
+
+        <div class="editor-textarea-wrap">
+          <textarea class="editor-textarea" id="editContent" placeholder="Kezd el ide gépelni vagy másolni a dalszöveget és az akkordokat. Ez a minta szöveg automatikusan el fog tűnni..." oninput="StageChartUI.renderEditorPreview()"></textarea>
+        </div>
+      </div>
+
+      <!-- ÉLŐ ELŐNÉZET JOBB OLDALON -->
+      <div class="main-viewer" id="editorPreviewPane" style="padding:24px 34px;">
+        <div class="sheet-header">
+          <div>
+            <div class="sheet-title" id="previewTitle">Amazing Grace</div>
+            <div class="sheet-subtitle" id="previewSubtitle"></div>
+            <div class="sheet-artist" id="previewArtist">John Newton</div>
+          </div>
+          <div class="sheet-meta-right" id="previewMeta">Hangnem: D</div>
+        </div>
+        <div class="sheet-body-wrapper">
+          <div class="sheet-body" id="previewBody"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       7. TELJES KÉTOSZLOPOS ÉNEK FORMÁZÁSA NÉZET (#screenFormatting)
+       ========================================================= -->
+  <section class="overlay-screen sub-overlay" id="screenFormatting">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" onclick="StageChartUI.closeFormattingScreen()" title="Vissza">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <span style="font-weight:600; font-size:17px; margin-left:8px;">Ének formázása</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-outline" onclick="StageChartUI.resetFormattingDefaults()">Alaphelyzet</button>
+      </div>
+    </header>
+
+    <div class="split-layout">
+      <!-- BAL OLDAL: ÉLŐ MINTA ELŐNÉZET (Take Me Home — John Denver) -->
+      <div class="main-viewer" id="formatPreviewContainer" style="border-right:1px solid var(--border);">
+        <div class="sheet-header" id="fmtSampleHeader">
+          <div>
+            <div class="sheet-title" id="fmtSampleTitle">Take Me Home</div>
+            <div class="sheet-subtitle" id="fmtSampleSubtitle">Country Roads</div>
+            <div class="sheet-artist" id="fmtSampleArtist">John Denver</div>
+          </div>
+          <div class="sheet-meta-right" id="fmtSampleMeta">Hangnem: G (F)<br>Kápó 2<br>90 BPM</div>
+        </div>
+        <div class="sheet-body-wrapper">
+          <div class="sheet-body" id="fmtSampleBody"></div>
+        </div>
+      </div>
+
+      <!-- JOBB OLDAL: MIND A 7 RÉSZLETES FORMÁZÁSI PANEL -->
+      <div class="format-pane-right">
+        <!-- 1. CÍM -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Cím</span>
+            <label class="switch">
+              <input type="checkbox" id="fmtTitleEnabled" checked onchange="StageChartUI.updateFormattingFromUI()">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div>
+            <div style="font-size:13px; margin-bottom:4px;">Betűméret: <strong id="lblFmtTitleSize">38</strong></div>
+            <input type="range" class="slider-full" id="fmtTitleSize" min="20" max="76" value="38" oninput="StageChartUI.updateFormattingFromUI()">
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtTitleColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="default">Alapértelmezett</option>
+                <option value="#0f6fd6">Királykék</option>
+                <option value="#dc2626">Piros</option>
+                <option value="#059669">Smaragdzöld</option>
+                <option value="#d97706">Borostyán</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('titleColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. METAADATOK -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Metaadatok</span>
+          </div>
+          <div>
+            <div style="font-size:13px; margin-bottom:4px;">Betűméret: <strong id="lblFmtMetaSize">22</strong></div>
+            <input type="range" class="slider-full" id="fmtMetaSize" min="13" max="48" value="22" oninput="StageChartUI.updateFormattingFromUI()">
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtMetaColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="default">Alapértelmezett</option>
+                <option value="#475569">Palaszürke</option>
+                <option value="#0f6fd6">Kék</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('metaColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+          </div>
+          <div class="checkbox-grid">
+            <label class="checkbox-row"><input type="checkbox" id="fmtShowSubtitle" checked onchange="StageChartUI.updateFormattingFromUI()"> Alcím</label>
+            <label class="checkbox-row"><input type="checkbox" id="fmtShowArtist" checked onchange="StageChartUI.updateFormattingFromUI()"> Előadó</label>
+            <label class="checkbox-row"><input type="checkbox" id="fmtShowKey" checked onchange="StageChartUI.updateFormattingFromUI()"> Hangnem</label>
+            <label class="checkbox-row"><input type="checkbox" id="fmtShowTempo" checked onchange="StageChartUI.updateFormattingFromUI()"> Tempó</label>
+            <label class="checkbox-row"><input type="checkbox" id="fmtShowTimeSig" onchange="StageChartUI.updateFormattingFromUI()"> Ütemmutató</label>
+          </div>
+        </div>
+
+        <!-- 3. DALSZÖVEG & SZAKASZOK (Verse, Chorus, Bridge) -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Dalszöveg</span>
+          </div>
+          <div>
+            <div style="font-size:13px; margin-bottom:4px;">Betűméret: <strong id="lblFmtLyricsSize">16</strong></div>
+            <input type="range" class="slider-full" id="fmtLyricsSize" min="12" max="60" value="16" oninput="StageChartUI.updateFormattingFromUI()">
+          </div>
+          <div class="checkbox-grid">
+            <label class="checkbox-row"><input type="radio" name="fmtLongLines" value="wrap" checked onchange="StageChartUI.updateFormattingFromUI()"> Hosszú sorok kettébontása</label>
+            <label class="checkbox-row"><input type="radio" name="fmtLongLines" value="shrink" onchange="StageChartUI.updateFormattingFromUI()"> Betűméret csökkentése</label>
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtLyricsColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="default">Alapértelmezett</option>
+                <option value="#1e293b">Mély antracit</option>
+                <option value="#0f6fd6">Kék</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('lyricsColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+          </div>
+
+          <!-- Szakaszok egyedi stílusai (Verse, Chorus, Bridge + Több hozzáadása) -->
+          <div id="sectionStylesContainer"></div>
+          <div style="text-align:center; margin-top:6px;">
+            <button class="btn-outline" onclick="StageChartUI.addCustomSectionStyle()">+ Több hozzáadása</button>
+          </div>
+        </div>
+
+        <!-- 4. CÍMSOROK -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Címsorok</span>
+            <label class="switch">
+              <input type="checkbox" id="fmtHeadingsEnabled" checked onchange="StageChartUI.updateFormattingFromUI()">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div>
+            <div style="font-size:13px; margin-bottom:4px;">Betűméret: <strong id="lblFmtHeadingSize">19</strong></div>
+            <input type="range" class="slider-full" id="fmtHeadingSize" min="13" max="52" value="19" oninput="StageChartUI.updateFormattingFromUI()">
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtHeadingColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="default">Alapértelmezett</option>
+                <option value="#0f6fd6">Kék</option>
+                <option value="#dc2626">Piros</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('headingColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+            <span>Kiemelés:</span>
+            <select class="select-clean" id="fmtHeadingHighlight" onchange="StageChartUI.updateFormattingFromUI()">
+              <option value="transparent">Nincs</option>
+              <option value="rgba(250, 204, 21, 0.35)">Sárga</option>
+              <option value="rgba(56, 189, 248, 0.25)">Kék</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 5. AKKORDOK -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Akkordok</span>
+          </div>
+          <div>
+            <div style="font-size:13px; margin-bottom:4px;">Betűméret: <strong id="lblFmtChordSize">16</strong></div>
+            <input type="range" class="slider-full" id="fmtChordSize" min="12" max="60" value="16" oninput="StageChartUI.updateFormattingFromUI()">
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtChordColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="#0b5bb5">Alapértelmezett (Kék)</option>
+                <option value="#dc2626">Piros</option>
+                <option value="#059669">Smaragdzöld</option>
+                <option value="#d97706">Borostyán</option>
+                <option value="#7c3aed">Lila</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('chordColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="style-toggle-btn active" id="btnFmtChordBold" onclick="StageChartUI.toggleFormatFlag('chordBold')">B</button>
+              <button class="style-toggle-btn" id="btnFmtChordItalic" onclick="StageChartUI.toggleFormatFlag('chordItalic')">I</button>
+            </div>
+          </div>
+          <div class="quick-row">
+            <span>Kiemelés színe:</span>
+            <select class="select-clean" id="fmtChordHighlight" onchange="StageChartUI.updateFormattingFromUI()">
+              <option value="transparent">Nincs</option>
+              <option value="rgba(250, 204, 21, 0.3)">Sárga kiemelés</option>
+              <option value="rgba(15, 111, 214, 0.14)">Halványkék</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 6. JEGYZETEK -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Jegyzetek</span>
+          </div>
+          <div class="quick-row">
+            <span>Szín:</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <select class="select-clean" id="fmtNotesColor" onchange="StageChartUI.updateFormattingFromUI()">
+                <option value="#64748b">Palaszürke</option>
+                <option value="#dc2626">Piros</option>
+                <option value="#0d9488">Türkiz</option>
+              </select>
+              <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('notesColor')" title="Egyéni RGB színválasztó">🎨</button>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="style-toggle-btn" id="btnFmtNotesBold" onclick="StageChartUI.toggleFormatFlag('notesBold')">B</button>
+              <button class="style-toggle-btn active" id="btnFmtNotesItalic" onclick="StageChartUI.toggleFormatFlag('notesItalic')">I</button>
+            </div>
+          </div>
+          <div class="quick-row">
+            <span>Zárójelek elrejtése az akkord-sorokban</span>
+            <label class="switch">
+              <input type="checkbox" id="fmtHideParens" onchange="StageChartUI.updateFormattingFromUI()">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 7. HÁTTÉR (8. kép alapján: kattintható szín-négyzet vizuális RGB/HSB színválasztóval) -->
+        <div class="format-block">
+          <div class="format-block-header">
+            <span>Háttér</span>
+          </div>
+          <div style="padding: 6px 0;">
+            <div class="bg-color-square" id="fmtBgColorSquare" onclick="StageChartUI.openColorPickerModal('sheetBgColor')" title="Kattints a háttérszín szabad kiválasztásához (RGB / Színmező)"></div>
+          </div>
+          <div class="quick-row">
+            <span>Gyors előbeállítás:</span>
+            <select class="select-clean" id="fmtSheetBgColor" onchange="StageChartUI.updateFormattingFromUI()">
+              <option value="default">Alapértelmezett (Fehér / Sötét)</option>
+              <option value="#fdfaf3">Meleg krém (Papír)</option>
+              <option value="#f1f5f9">Lágy szürkéskék</option>
+              <option value="custom">Egyéni szín (Színválasztó)</option>
+            </select>
+            <button class="btn-outline" style="padding:4px 10px; font-size:12px;" onclick="StageChartUI.openColorPickerModal('sheetBgColor')">🎨 Színválasztó...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       8. MÓDOSÍTÓJELEK BEÁLLÍTÁSA ALOLDAL (#screenAccidentals)
+       ========================================================= -->
+  <section class="overlay-screen sub-overlay" id="screenAccidentals">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" onclick="StageChartUI.closeAccidentalsScreen()" title="Vissza az Ének megjelenítéséhez">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <span style="font-weight:600; font-size:17px; margin-left:8px;">Módosítójelek beállítása</span>
+      </div>
+    </header>
+    <div class="settings-content" style="margin:0 auto; width:100%;">
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:18px;">
+        Állítsd be félhangpáronként, hogy transzponáláskor az automatikus hangnem-szabályt kövesse a kotta, vagy mindig keresztes (#) illetve bés (b) alakot jelenítsen meg:
+      </p>
+      <div class="setting-row">
+        <div class="setting-label">A# / Bb (Magyar: A# / B):</div>
+        <select class="select-clean" id="accPair_A#" onchange="StageChartUI.saveAccidentalOverride('A#', this.value)">
+          <option value="auto">Automatikus</option>
+          <option value="#">Kereszt (A#)</option>
+          <option value="b">Bé (Bb / B)</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">C# / Db:</div>
+        <select class="select-clean" id="accPair_C#" onchange="StageChartUI.saveAccidentalOverride('C#', this.value)">
+          <option value="auto">Automatikus</option>
+          <option value="#">Kereszt (C#)</option>
+          <option value="b">Bé (Db)</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">D# / Eb:</div>
+        <select class="select-clean" id="accPair_D#" onchange="StageChartUI.saveAccidentalOverride('D#', this.value)">
+          <option value="auto">Automatikus</option>
+          <option value="#">Kereszt (D#)</option>
+          <option value="b">Bé (Eb)</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">F# / Gb:</div>
+        <select class="select-clean" id="accPair_F#" onchange="StageChartUI.saveAccidentalOverride('F#', this.value)">
+          <option value="auto">Automatikus</option>
+          <option value="#">Kereszt (F#)</option>
+          <option value="b">Bé (Gb)</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">G# / Ab:</div>
+        <select class="select-clean" id="accPair_G#" onchange="StageChartUI.saveAccidentalOverride('G#', this.value)">
+          <option value="auto">Automatikus</option>
+          <option value="#">Kereszt (G#)</option>
+          <option value="b">Bé (Ab)</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       9. TELJES BEÁLLÍTÁSOK MENÜRENDSZER (LICENC KÁRTYA NÉLKÜL!)
+       ========================================================= -->
+  <section class="overlay-screen" id="screenSettings">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" onclick="StageChartUI.closeSettingsScreen()" title="Vissza a főképernyőre">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <span style="font-weight:600; font-size:17px; margin-left:8px;" data-i18n="settings.title">Beállítások</span>
+      </div>
+    </header>
+
+    <div class="settings-layout">
+      <!-- BAL OLDALI KATEGÓRIALISTA (Nincs Licenc doboz!) -->
+      <nav class="settings-nav">
+        <div class="settings-nav-item active" onclick="StageChartUI.switchSettingsPage('ui', this)"><span data-i18n="nav.ui">Felület</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('display', this)"><span data-i18n="nav.display">Ének megjelenítése</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('fab', this)"><span data-i18n="nav.fab">Élő gombok:</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('audio', this)"><span data-i18n="nav.audio">Audio & Csatorna-routing</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('pedals', this)"><span data-i18n="nav.pedals">Lábkapcsolók és vezérlők</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('chords', this)"><span data-i18n="nav.chords">Akkord diagramok</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('print', this)"><span data-i18n="nav.print">Nyomtatás</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('backup', this)"><span data-i18n="nav.backup">Biztonsági mentés és szinkronizáció</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('groups', this)"><span data-i18n="nav.groups">StageChart Groups (Live Sync)</span><span>›</span></div>
+        <div class="settings-nav-item" id="navLicense" onclick="StageChartUI.switchSettingsPage('license', this)"><span data-i18n="nav.license">Licenc</span><span>›</span></div>
+        <div class="settings-nav-item" onclick="StageChartUI.switchSettingsPage('about', this)"><span data-i18n="nav.about">Rólunk, Dokumentáció, Támogatás</span><span>›</span></div>
+      </nav>
+
+      <!-- JOBB OLDALI BEÁLLÍTÁSI TARTALOM -->
+      <div class="settings-content">
+
+        <!-- 1. FELÜLET -->
+        <div class="settings-page active" id="setPage-ui">
+          <h1 class="settings-h1" data-i18n="ui.h1">Felület</h1>
+
+          <div class="settings-group-title" data-i18n="ui.general">Általános</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" data-i18n="ui.language">Nyelv</div>
+              <div class="setting-desc" data-i18n="ui.language.desc">A felület nyelve (azonnal vált, frissítés nélkül)</div>
+            </div>
+            <select class="select-clean" id="setLanguageSelect" onchange="StageChartUI.updateSetting('language', this.value)">
+              <option value="hu" data-i18n="lang.hu">Magyar</option>
+              <option value="en" data-i18n="lang.en">Angol</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" data-i18n="ui.theme">Téma</div>
+              <div class="setting-desc" data-i18n="ui.theme.desc">A teljes felület színvilága és stílusa</div>
+            </div>
+            <select class="select-clean" id="setThemeSelect" onchange="StageChartUI.updateSetting('theme', this.value)">
+              <option value="default" data-i18n="theme.default">Alapértelmezett (világos / sötét)</option>
+              <option value="oled" data-i18n="theme.oled">OLED Színpad</option>
+              <option value="studio" data-i18n="theme.studio">Stúdió</option>
+              <option value="acoustic" data-i18n="theme.acoustic">Akusztikus</option>
+              <option value="glass" data-i18n="theme.glass">Modern Glass</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.darkmode">Sötét mód</div>
+            <label class="switch">
+              <input type="checkbox" id="chkDarkMode" onchange="StageChartUI.toggleDarkMode(this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.hideTopbar">Felső sáv elrejtése:</div>
+            <select class="select-clean" id="setHideTopbar" onchange="StageChartUI.updateSetting('hideTopbarMode', this.value)">
+              <option value="never">Soha</option>
+              <option value="5s">5 másodperc után</option>
+              <option value="10s">10 másodperc után</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" data-i18n="ui.stageDimmer">Színpadi fényerő-kímélő mód</div>
+              <div class="setting-desc">Szünetben (25 mp inaktivitás után) lehalványítja a kijelzőt</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkStageDimmer" onchange="StageChartUI.updateSetting('stageDimmerIdle', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title" data-i18n="ui.sidebar">Oldalsáv</div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.compactSidebar">Kompakt oldalsáv</div>
+            <label class="switch">
+              <input type="checkbox" id="chkCompactSidebar" onchange="StageChartUI.updateSetting('compactSidebar', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.numberSongs">Énekek sorszámozása a listákban</div>
+            <label class="switch">
+              <input type="checkbox" id="chkNumberSongs" checked onchange="StageChartUI.updateSetting('numberSongsInLists', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title" data-i18n="ui.navigation">Navigáció</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" data-i18n="ui.touchZones">Érintési zónák engedélyezése</div>
+              <div class="setting-desc">A képernyő bal és jobb szélének érintésére lapoz</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkTouchZones" onchange="StageChartUI.updateSetting('touchZonesEnabled', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.swipeTurn">Lapozás oldalra húzással</div>
+            <label class="switch">
+              <input type="checkbox" id="chkSwipeTurn" checked onchange="StageChartUI.updateSetting('swipePageTurn', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title" data-i18n="ui.quick">Gyorsműveletek</div>
+          <div class="setting-row">
+            <div class="setting-label" data-i18n="ui.webSearch">Webes lejátszó keresés:</div>
+            <select class="select-clean" id="setWebProvider" onchange="StageChartUI.updateSetting('webSearchProvider', this.value)">
+              <option value="YouTube">YouTube</option>
+              <option value="Spotify">Spotify</option>
+              <option value="Google">Google</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Súgó mód megjelenítése</div>
+            <label class="switch">
+              <input type="checkbox" id="chkHelpMode" onchange="StageChartUI.updateSetting('showHelpBadges', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. ÉNEK MEGJELENÍTÉSE (100%-ig teljes ChordPro & PDF blokkok + Módosítójelek aloldal) -->
+        <div class="settings-page" id="setPage-display">
+          <h1 class="settings-h1">Ének megjelenítése</h1>
+
+          <div class="settings-group-title">ChordPro énekek</div>
+          <div class="setting-row clickable" onclick="StageChartUI.openFormattingScreen(true)">
+            <div>
+              <div class="setting-label">Ének formázása</div>
+              <div class="setting-desc">Betűtípusok, méretek, szakaszok és színek élő testreszabása</div>
+            </div>
+            <span style="font-size:18px; color:var(--text-muted);">›</span>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Akkordok jelölése (Kimenet):</div>
+              <div class="setting-desc">Magyar/Európai (H / Hm / B) vagy Sztenderd angolszász (B / Bm / Bb)</div>
+            </div>
+            <select class="select-clean" id="setNotationSystem" onchange="StageChartUI.updateSetting('notation', this.value)">
+              <option value="hu">Magyar / Európai (H/B)</option>
+              <option value="en">Sztenderd jelölés (B/Bb)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Beírt „B” akkord értelmezése a kottákban:</div>
+              <div class="setting-desc">Megakadályozza, hogy az angol kottákban lévő B/D# vagy G/B akkord transzponáláskor G#/C#-re csússzon el</div>
+            </div>
+            <select class="select-clean" id="setBNoteInputMode" onchange="StageChartUI.updateSetting('bNoteInputMode', this.value)">
+              <option value="auto">Automatikus / Intelligens (Ajánlott)</option>
+              <option value="en_b">Mindig angol B-ként (= magyar H, félhang: Bb)</option>
+              <option value="hu_b">Mindig magyar B-ként (= angol Bb, félhang: H)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Oldal elrendezés:</div>
+            <select class="select-clean" id="setPageLayout" onchange="StageChartUI.updateSetting('pageLayout', this.value)">
+              <option value="auto">Automatikus</option>
+              <option value="scroll">Énekek görgetése</option>
+              <option value="multipage">Énekek több oldalra bontása</option>
+              <option value="fit">Egy lapra egy ének</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Hosszú sorok esetén:</div>
+            <select class="select-clean" id="setLongLines" onchange="StageChartUI.updateSetting('longLinesBehavior', this.value)">
+              <option value="wrap">Hosszú sorok kettébontása</option>
+              <option value="shrink">Betűméret csökkentése</option>
+            </select>
+          </div>
+
+          <div class="setting-row clickable" onclick="StageChartUI.openAccidentalsScreen()">
+            <div>
+              <div class="setting-label">Módosítójelek beállítása</div>
+              <div class="setting-desc">A#/Bb, C#/Db, D#/Eb, F#/Gb, G#/Ab egyéni felülbírálása</div>
+            </div>
+            <span style="font-size:18px; color:var(--text-muted);">›</span>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Figyelmeztessen, ha a tabok hibásak a transzponáció miatt</div>
+            <label class="switch">
+              <input type="checkbox" id="chkWarnTabs" checked onchange="StageChartUI.updateSetting('warnTabsOnTranspose', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title" style="margin-top:28px;">PDF énekek</div>
+          <div class="setting-row">
+            <div class="setting-label">Oldal elrendezés:</div>
+            <select class="select-clean" id="setPdfLayout" onchange="StageChartUI.updateSetting('pdfLayout', this.value)">
+              <option value="default">Alapértelmezett (mint a ChordPro)</option>
+              <option value="scroll">Folyamatos görgetés</option>
+              <option value="single">Egyoldalas nézet</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">PDF minősége:</div>
+            <select class="select-clean" id="setPdfQuality" onchange="StageChartUI.updateSetting('pdfQuality', this.value)">
+              <option value="low">Alacsony (Gyors)</option>
+              <option value="medium" selected>Közepes</option>
+              <option value="high">Magas (Retina)</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">A PDF színeinek invertálása</div>
+            <label class="switch">
+              <input type="checkbox" id="chkPdfInvert" onchange="StageChartUI.updateSetting('pdfInvertColors', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Automatikus körülvágás importáláskor</div>
+            <label class="switch">
+              <input type="checkbox" id="chkPdfCrop" checked onchange="StageChartUI.updateSetting('pdfAutoCrop', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. ÉLŐ GOMBOK, METRONÓM & AUTOMATIKUS GÖRGETÉS -->
+        <div class="settings-page" id="setPage-fab">
+          <h1 class="settings-h1">Élő gombok:</h1>
+
+          <div class="settings-group-title">Elrendezés</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Nagy kontraszt</div>
+              <div class="setting-desc">Erősebb keretek és láthatóság erős színpadi fényben</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkHighContrast" onchange="StageChartUI.updateSetting('highContrast', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title">Metronóm</div>
+          <div class="setting-row">
+            <div class="setting-label">A parancssor villog a metronómmal együtt</div>
+            <label class="switch">
+              <input type="checkbox" id="chkMetroFlash" checked onchange="StageChartUI.updateSetting('metronomeFlashTopbar', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Metronóm hangjának bekapcsolása</div>
+            <label class="switch">
+              <input type="checkbox" id="chkMetroSound" checked onchange="StageChartUI.updateSetting('metronomeSoundEnabled', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">A metronóm kikapcsol:</div>
+            <select class="select-clean" id="setMetroAutoOff" onchange="StageChartUI.updateSetting('metronomeAutoOff', this.value)">
+              <option value="never">Soha</option>
+              <option value="4bars">4 ütem után</option>
+              <option value="8bars">8 ütem után</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Néma vizuális beszámolás (Intro villanás):</div>
+              <div class="setting-desc">A dal indításakor csak vizuálisan villog a megadott ütemszámig</div>
+            </div>
+            <select class="select-clean" id="setIntroSilentBars" onchange="StageChartUI.updateSetting('introSilentFlashBars', this.value)">
+              <option value="0">Kikapcsolva</option>
+              <option value="4">Első 4 ütem néma</option>
+              <option value="8">Első 8 ütem néma</option>
+            </select>
+          </div>
+
+          <div class="settings-group-title">Automatikus görgetés</div>
+          <div class="setting-row">
+            <div class="setting-label">Alapértelmezett ének hossz:</div>
+            <strong>1 min 30 sec</strong>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Automatikus görgetés késleltetése</div>
+              <div class="setting-desc">Az automatikus görgetés indításának késleltetése 10 másodperccel</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkScrollDelay" onchange="StageChartUI.updateSetting('autoScrollDelaySec', this.checked ? 10 : 0)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Automatikus görgetés túlfutása</div>
+              <div class="setting-desc">Extra üres tér hozzáadása a dal végéhez</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkScrollOvershoot" onchange="StageChartUI.updateSetting('autoScrollOvershoot', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title">Kézzel írt jegyzetek</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Egyesített szabadkézi jegyzetelés használata</div>
+              <div class="setting-desc">A listákban lévő dalokra írt jegyzetek az eredeti dalra is mentődnek</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkUnifiedNotes" checked onchange="StageChartUI.updateSetting('unifiedFreehandNotes', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. UNIVERZÁLIS AUDIO MUNKAÁLLOMÁS & CSATORNA-ROUTING -->
+        <div class="settings-page" id="setPage-audio">
+          <h1 class="settings-h1">Audio kimenetek & Csatorna-routing</h1>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Észlelt fizikai audio kimenetek:</div>
+              <div class="setting-desc">Bármilyen sztereó vagy többcsatornás USB/ASIO/CoreAudio hangkártya</div>
+            </div>
+            <strong id="maxChannelsBadge" style="color:var(--accent);">2 csatorna</strong>
+          </div>
+
+          <div class="settings-group-title">Csatorna kiosztás (Routing mátrix)</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Klikk / Metronóm kimenet (Mono):</div>
+              <div class="setting-desc">Fülmonitor (In-Ear) csatorna</div>
+            </div>
+            <select class="select-clean" id="routeClickCh" onchange="StageChartUI.updateAudioRouting()">
+              <option value="0">Kimenet 1 (Mono — Bal / Out 1)</option>
+              <option value="1">Kimenet 2 (Mono — Jobb / Out 2)</option>
+              <option value="2">Kimenet 3 (Multi-Out Ch 3)</option>
+              <option value="3">Kimenet 4 (Multi-Out Ch 4)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Cue / Szóbeli beszámolás kimenet (Mono):</div>
+              <div class="setting-desc">"1, 2, 3, 4", "Intro", "Chorus" bemondások csatornája</div>
+            </div>
+            <select class="select-clean" id="routeCueCh" onchange="StageChartUI.updateAudioRouting()">
+              <option value="1" selected>Kimenet 2 (Mono — Jobb / Out 2)</option>
+              <option value="0">Kimenet 1 (Mono — Bal / Out 1)</option>
+              <option value="2">Kimenet 3 (Multi-Out Ch 3)</option>
+              <option value="3">Kimenet 4 (Multi-Out Ch 4)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Ambient Pad & Dobgép kimenet (Sztereó pár):</div>
+              <div class="setting-desc">Keverőpultba (FOH) küldött tiszta sztereó jel</div>
+            </div>
+            <select class="select-clean" id="routePadCh" onchange="StageChartUI.updateAudioRouting()">
+              <option value="0-1">Kimenet 1 + 2 (Alapértelmezett Sztereó)</option>
+              <option value="2-3" selected>Kimenet 3 + 4 (Dedikált FOH Sztereó pár)</option>
+              <option value="4-5">Kimenet 5 + 6 (Sztereó pár)</option>
+              <option value="6-7">Kimenet 7 + 8 (Sztereó pár)</option>
+            </select>
+          </div>
+
+          <div class="settings-group-title">Ambient Pad & Groove Engine</div>
+          <div class="setting-row">
+            <div class="setting-label">Ambient Pad hangszín karakter:</div>
+            <select class="select-clean" id="setPadCharacter" onchange="StageChartUI.updateAudioRouting()">
+              <option value="warm">Meleg analóg szőnyeg (1-5 Drone)</option>
+              <option value="strings">Lágy szimfonikus vonósok</option>
+              <option value="organ">Templomi / Hammond orgona</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Fade-In és Fade-Out átúsztatási idő:</div>
+            <select class="select-clean" id="setPadFadeTime" onchange="StageChartUI.updateAudioRouting()">
+              <option value="1.5">1.5 másodperc (Gyors)</option>
+              <option value="2.8" selected>2.8 másodperc (Természetes)</option>
+              <option value="4.5">4.5 másodperc (Hosszú ambient)</option>
+            </select>
+          </div>
+
+          <div class="settings-group-title">Saját hangminták betöltése (audio/pads & audio/drums)</div>
+          <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">
+            A program indításkor automatikusan keresi az <code>audio/pads/</code> mappába másolt hangokat, vagy itt közvetlenül is betöltheted őket (a böngésző tartósan megjegyzi):
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+            <label class="btn-primary" style="cursor:pointer;">
+              📂 Pad hangfájlok kijelölése (.mp3 / .wav)
+              <input type="file" accept=".mp3,.wav,.ogg,.m4a,.flac,audio/*" multiple style="display:none;" onchange="StageChartUI.handleCustomPadsUpload(event)">
+            </label>
+            <label class="btn-outline" style="cursor:pointer;">
+              📁 Teljes Pad mappa betöltése
+              <input type="file" webkitdirectory directory multiple style="display:none;" onchange="StageChartUI.handleCustomPadsUpload(event)">
+            </label>
+            <label class="btn-outline" style="cursor:pointer;">
+              🥁 Saját Dob sample-ök betöltése
+              <input type="file" accept=".mp3,.wav,.ogg,audio/*" multiple style="display:none;" onchange="StageChartUI.handleCustomDrumsUpload(event)">
+            </label>
+            <button class="btn-outline" onclick="StageChartUI.resetCustomPadsToSynth()" title="Visszaállás a beépített szintetizátorra">↺ Beépített Synth</button>
+          </div>
+          <div id="padStatusGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:6px; margin-top:14px;"></div>
+        </div>
+
+        <!-- 5. LÁBKAPCSOLÓK ÉS VEZÉRLŐK -->
+        <div class="settings-page" id="setPage-pedals">
+          <h1 class="settings-h1">Lábkapcsolók és vezérlők</h1>
+          <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:12px;">
+            Ha lehetséges, állítsd a Bluetooth lábkapcsolót key-press / billentyűzet módba. A kártyákon lévő gombok élesben vezérlik a kottát:
+          </p>
+
+          <div class="pedal-grid" id="pedalCardsGrid"></div>
+
+          <div class="settings-group-title" style="margin-top:26px;">Művelet beállítások</div>
+          <div class="setting-row">
+            <div class="setting-label">Görgetés hossza: <strong id="lblPedalScrollPct">50%</strong></div>
+            <input type="range" class="slider-full" style="max-width:260px;" min="20" max="95" value="50" oninput="StageChartUI.updateSetting('pedalScrollPercent', parseInt(this.value,10)); document.getElementById('lblPedalScrollPct').textContent = this.value + '%';">
+          </div>
+
+          <div class="settings-group-title">MIDI & Okos lapozás</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">MIDI vezérlés és Patch küldés</div>
+              <div class="setting-desc">MIDI lábkapcsolók fogadása és Program Change küldése dalváltáskor</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkMidiEnabled" onchange="StageChartUI.toggleMidiSupport(this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Webkamerás kézmozdulat-lapozás (Szigorúan ki-be kapcsolható)</div>
+              <div class="setting-desc">Alapértelmezetten kikapcsolva, hogy dal közbeni hangszeres mozdulat ne lapozzon</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkWebcamGesture" onchange="StageChartUI.toggleWebcamSupport(this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 6. AKKORD DIAGRAMOK -->
+        <div class="settings-page" id="setPage-chords">
+          <h1 class="settings-h1">Akkord diagramok</h1>
+
+          <div class="settings-group-title">Hangszer</div>
+          <div class="instrument-grid" id="instrumentSelectorGrid">
+            <div class="inst-card active" onclick="StageChartUI.selectInstrument('Gitár', this)">🎸<br>Gitár</div>
+            <div class="inst-card" onclick="StageChartUI.selectInstrument('Zongora', this)">🎹<br>Zongora</div>
+            <div class="inst-card" onclick="StageChartUI.selectInstrument('Ukulele', this)">🪕<br>Ukulele</div>
+            <div class="inst-card" onclick="StageChartUI.selectInstrument('Bendzsó', this)">🪕<br>Bendzsó</div>
+            <div class="inst-card" onclick="StageChartUI.selectInstrument('Mandolin', this)">🎻<br>Mandolin</div>
+            <div class="inst-card" onclick="StageChartUI.selectInstrument('Egyéb', this)">🥁<br>Egyéb</div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Hangolás:</div>
+            <select class="select-clean" id="setTuningSelect" onchange="StageChartUI.updateSetting('tuning', this.value)">
+              <option value="Standard">Standard</option>
+              <option value="Drop D">Drop D</option>
+              <option value="DADGAD">DADGAD</option>
+              <option value="Open D">Open D</option>
+              <option value="Open E">Open E</option>
+              <option value="Open G">Open G</option>
+              <option value="Open A">Open A</option>
+            </select>
+          </div>
+
+          <div class="settings-group-title">Akkord diagramok</div>
+          <div class="setting-row">
+            <div class="setting-label">Akkord diagramok megjelenítése a dal felett</div>
+            <label class="switch">
+              <input type="checkbox" id="chkInlineDiagrams" onchange="StageChartUI.updateSetting('showChordDiagramsInline', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Balkezes akkord diagramok</div>
+            <label class="switch">
+              <input type="checkbox" id="chkLeftHanded" onchange="StageChartUI.updateSetting('leftHandedChords', this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-group-title">Ismert akkordok</div>
+          <p style="font-size:13px; color:var(--text-muted);">
+            Kattints egy akkord diagramra a dalok mellett, ha hozzá szeretnéd adni az ismert akkordokhoz (elrejtéshez).
+          </p>
+        </div>
+
+        <!-- 7. NYOMTATÁS -->
+        <div class="settings-page" id="setPage-print">
+          <h1 class="settings-h1">Nyomtatás</h1>
+          <div class="setting-row">
+            <div class="setting-label">Betűméret:</div>
+            <select class="select-clean" onchange="StageChartUI.updateSetting('printFontSize', this.value)">
+              <option value="10 pt">10 pt</option>
+              <option value="12 pt" selected>12 pt</option>
+              <option value="14 pt">14 pt</option>
+              <option value="16 pt">16 pt</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">URL link nyomtatása</div>
+            <label class="switch"><input type="checkbox" checked onchange="StageChartUI.updateSetting('printUrlLink', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Színes nyomtatás</div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('printColor', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Akkord diagramok nyomtatása</div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('printChordDiagrams', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Dalok sorszámának nyomtatása</div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('printSongNumbers', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Tablet formátum használata a listákhoz</div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('printTabletFormat', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Alapvető oldalméret:</div>
+            <strong>A4</strong>
+          </div>
+          <div style="margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <button class="btn-outline" style="width:210px;" onclick="StageChartUI.printCurrentSong()">Ének előnézet</button>
+            <button class="btn-outline" style="width:210px;" onclick="StageChartUI.printCurrentSong()">Lista előnézet</button>
+          </div>
+        </div>
+
+        <!-- 8. BIZTONSÁGI MENTÉS ÉS ONLINE SZINKRONIZÁCIÓ -->
+        <div class="settings-page" id="setPage-backup">
+          <h1 class="settings-h1">Online szinkronizáció</h1>
+
+          <div class="settings-group-title">Biztonsági mentés és SongbookPro (.sbpbackup) átköltöztetés</div>
+          <div style="display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap;">
+            <button class="btn-outline" onclick="StageChartUI.backupFullLibrary()">⬇ Könyvtár mentése (.json)</button>
+            <button class="btn-primary" onclick="StageChartUI.openSmartImportModal(false)">📦 SongbookPro (.sbpbackup / .sbp) vagy Könyvtár betöltése</button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Automatikus biztonsági mentés</div>
+              <div class="setting-desc">Automatikus heti biztonsági mentés az eszközre (kottak/ mappa)</div>
+            </div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('autoBackupWeekly', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Exportálás zenei alapokkal együtt</div>
+              <div class="setting-desc">Ez jelentősen megnöveli a biztonsági mentések méretét</div>
+            </div>
+            <label class="switch"><input type="checkbox" onchange="StageChartUI.updateSetting('exportWithBackingTracks', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-group-title">Online szinkronizáció</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Online szinkronizáció</div>
+              <div class="setting-desc">Mentsd el a könyvtáradat a felhőbe, és szinkronizáld több eszköz között</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="chkOnlineSync" onchange="StageChartUI.updateSetting('onlineSyncEnabled', this.checked)"><span class="switch-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Fenntartó:</div>
+            <select class="select-clean" onchange="StageChartUI.updateSetting('cloudProvider', this.value)">
+              <option value="">Válassz...</option>
+              <option value="gdrive">Google Drive</option>
+              <option value="dropbox">Dropbox</option>
+              <option value="onedrive">OneDrive</option>
+            </select>
+          </div>
+          <div class="checkbox-grid" style="margin-top:12px;">
+            <label class="checkbox-row"><input type="radio" name="syncFreq" value="manual" checked> Csak manuális szinkronizálás</label>
+            <label class="checkbox-row"><input type="radio" name="syncFreq" value="open"> Szinkronizálás megnyitáskor</label>
+            <label class="checkbox-row"><input type="radio" name="syncFreq" value="10m"> Szinkronizálás megnyitáskor és minden 10 percben</label>
+          </div>
+        </div>
+
+        <!-- 9. STAGECHART GROUPS (KARMESTER MÓD / LIVE SYNC) -->
+        <div class="settings-page" id="setPage-groups">
+          <h1 class="settings-h1" data-i18n="sync.h1">StageChart Groups — Zenekari Szinkron</h1>
+          <p style="font-size:14px; color:var(--text-muted); margin-bottom:18px;" data-i18n="sync.desc">
+            Kapcsold össze a zenekar eszközeit szerver nélkül (közvetlen WebRTC kapcsolat). A Leader dalt vált, transzponál vagy színpadi jelzést küld — a Follower eszközök azonnal követik, és a teljes setlistát előre letöltik, így hálózati szakadás esetén is lapozhatók maradnak.
+          </p>
+          <div class="sync-actions">
+            <button class="btn-primary" id="btnSyncStartLeader" onclick="StageChartUI.startLeaderSync()" data-i18n="sync.start">Szinkronizáció indítása (Leader)</button>
+            <button class="btn-outline" id="btnSyncJoin" onclick="StageChartUI.openFollowerJoinModal()" data-i18n="sync.join">Csatlakozás zenekarhoz (Follower)</button>
+            <button class="btn-outline" id="btnSyncStop" onclick="StageChartUI.stopSync()" style="display:none;" data-i18n="sync.stop">Szinkron leállítása</button>
+          </div>
+          <div class="sync-status-line" id="syncPanelStatus" data-i18n="sync.status.off">Nincs aktív szinkron.</div>
+          <!-- Régi szerepkör-választó (rejtett, kompatibilitás miatt) -->
+          <select id="setSyncRoleSelect" style="display:none;" onchange="StageChartUI.changeSyncRole(this.value)">
+            <option value="off">off</option>
+            <option value="leader">leader</option>
+            <option value="follower">follower</option>
+          </select>
+        </div>
+
+        <!-- 9/B. LICENC (próbaverzió / aktiválás) -->
+        <div class="settings-page" id="setPage-license">
+          <h1 class="settings-h1" data-i18n="license.h1">Licenc</h1>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" data-i18n="license.status">Állapot</div>
+              <div class="setting-desc" id="licenseSongCount">—</div>
+            </div>
+            <span class="license-badge" id="licenseStatusBadge">—</span>
+          </div>
+
+          <div class="settings-group-title" data-i18n="license.enter">Licenc megadása</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;" data-i18n="license.enter.desc">Írd be a vásárláskor kapott licenckulcsot a korlátlan daltárhoz.</p>
+          <div class="license-form" id="licenseForm">
+            <input type="text" class="line-input" id="licenseKeyInput" autocomplete="off" spellcheck="false" placeholder="Licenckulcs" data-i18n-placeholder="license.placeholder" onkeydown="if(event.key==='Enter') StageChartUI.activateLicenseFromUI()">
+            <button class="btn-primary" id="btnLicenseActivate" onclick="StageChartUI.activateLicenseFromUI()" data-i18n="license.activate">Aktiválás</button>
+          </div>
+          <div class="license-message" id="licenseMessage"></div>
+          <button class="btn-outline" id="btnLicenseDeactivate" style="display:none; margin-top:14px;" onclick="StageChartUI.deactivateLicenseFromUI()" data-i18n="license.deactivate">Licenc eltávolítása</button>
+        </div>
+
+        <!-- 10. RÓLUNK & DOKUMENTÁCIÓ -->
+        <div class="settings-page" id="setPage-about">
+          <h1 class="settings-h1">StageChart — Színpadi Munkaállomás</h1>
+          <p style="font-size:14px; line-height:1.6; color:var(--text-muted);">
+            A <strong>StageChart</strong> egy kifejezetten élő koncertekre és próbatermi munkára tervezett digitális kottázó és többcsatornás audio munkaállomás.<br><br>
+            • Magyar/Európai (H, Hm, B) és Angolszász (B, Bm, Bb) zeneelméleti motor<br>
+            • Kézi vezérlésű Ambient Synth Pad (Fade-in / Fade-out) és Groove Engine dobgép<br>
+            • Univerzális többcsatornás Audio Routing (Klikk, Cue, Sztereó FOH Pad)<br>
+            • Próbatermi Section Looper, Tempó-gyorsító edző, Gig Clock és Kápó-optimalizáló
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       10. UNIVERZÁLIS MODAL (AKKORD DIAGRAMOK, HANGOLÓ, ESZKÖZÖK, SETLISTA ÉNEK VÁLASZTÓ, SZÍNVÁLASZTÓ)
+       ========================================================= -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this) StageChartUI.closeModal()">
+    <div class="modal-card" id="modalContent"></div>
+  </div>
+
+  <!-- NYOMTATHATÓ SETLISTA ÁTTEKINTŐ LAP (7. kép alapján) -->
+  <div id="setlistOverviewPrintArea"></div>
+
+  <!-- AZONNALI SÖTÉT TOOLTIP FELIRAT (7. kép alapján) -->
+  <div class="floating-tooltip-pill" id="floatingTooltipPill"></div>
+
+  <!-- REJTETT FÁJLVÁLASZTÓ INPUTOK (accept szűrő nélkül, hogy a Windows 11 Letöltések mappa sose akadjon ki!) -->
+  <input type="file" id="hiddenSongFileInput" multiple style="display:none;" onchange="StageChartUI.importSongFile(event)">
+  <input type="file" id="hiddenSetlistFileInput" multiple style="display:none;" onchange="StageChartUI.importSetlistFile(event)">
+
+  <!-- PDF.js és Tesseract OCR motorok (ha van internet, 100%-os pontosságú PDF koordináta-olvasás és fotó-OCR; offline módban a beépített motor fut) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- PeerJS (WebRTC) — szerver nélküli zenekari szinkronhoz (a kapcsolat felépítéséhez egyszeri internet kell) -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+
+  <!-- MODULOK BETÖLTÉSE (Helyi szerver nélkül is azonnal fut) -->
+  <script src="kottak/default-library.js?v=11"></script>
+  <script src="js/theory.js?v=11"></script>
+  <script src="js/audio.js?v=11"></script>
+  <script src="js/i18n.js?v=11"></script>
+  <script src="js/license.js?v=11"></script>
+  <script src="js/stage-tools.js?v=11"></script>
+  <script src="js/p2p-sync.js?v=11"></script>
+  <script src="js/ui.js?v=11"></script>
+</body>
+</html>
