@@ -1934,15 +1934,15 @@ window.StageChartUI = (function () {
         if (!swiping) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        if (Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy)) {
+        if (Math.abs(dx) > 35 && Math.abs(dx) > Math.abs(dy)*1.5) {
           movedHoriz = true;
-          if (dx > 22) {
+          if (dx > 40) {
             // Más nyitott sorok bezárása
             frameBox.querySelectorAll('.setlist-swipe-wrapper.swiped-open').forEach(w => {
               if (w !== wrapper) w.classList.remove('swiped-open');
             });
             wrapper.classList.add('swiped-open');
-          } else if (dx < -18) {
+          } else if (dx < -30) {
             wrapper.classList.remove('swiped-open');
           }
         }
@@ -1957,12 +1957,14 @@ window.StageChartUI = (function () {
           movedHoriz = false;
           return;
         }
-        if (wrapper.classList.contains('swiped-open')) {
-          wrapper.classList.remove('swiped-open');
+        const anyOpen = frameBox.querySelector('.setlist-swipe-wrapper.swiped-open');
+        if (anyOpen) {
+          anyOpen.classList.remove('swiped-open');
           return;
         }
-        runtime.activeSetlistId = list.id;
-        selectSongById(s.id);
+       runtime.activeSetlistId = list.id;
+    runtime.currentSetlistIndex = idx; // <--- Ezt a sort add hozzá ide
+    selectSongById(s.id);
       };
 
       // Szabadon húzható (Drag & Drop) átrendezés a "=" fogantyúval (egérrel és érintőképernyőn is!)
@@ -5489,23 +5491,39 @@ window.StageChartUI = (function () {
 
   function nextSongInLibrary(dir = 1) {
     let list = songs;
+    let songIds = [];
+    
     if (sessionSetlist && Array.isArray(sessionSetlist.songs) && sessionSetlist.songs.length) {
       if (sessionSetlist.setlist && Array.isArray(sessionSetlist.setlist.songIds) && sessionSetlist.setlist.songIds.length) {
-        list = sessionSetlist.setlist.songIds
-          .map(id => sessionSetlist.songs.find(s => String(s.id) === String(id)))
-          .filter(Boolean);
+        songIds = sessionSetlist.setlist.songIds;
+        list = songIds.map(id => sessionSetlist.songs.find(s => String(s.id) === String(id))).filter(Boolean);
+      } else {
+        list = sessionSetlist.songs;
+        songIds = list.map(s => s.id);
       }
-      if (!list || !list.length) list = sessionSetlist.songs;
     } else if (runtime.activeSetlistId) {
       const setObj = setlists.find(l => l.id === runtime.activeSetlistId);
-      if (setObj && setObj.songIds.length) {
-        list = setObj.songIds.map(id => songs.find(s => s.id === id)).filter(Boolean);
+      if (setObj && setObj.songIds && setObj.songIds.length) {
+        songIds = setObj.songIds;
+        list = songIds.map(id => songs.find(s => s.id === id)).filter(Boolean);
       }
     }
+
     if (!list || !list.length) return;
-    const idx = list.findIndex(s => String(s.id) === String(runtime.currentSongId));
-    const nextIdx = (idx + dir + list.length) % list.length;
-    if (list[nextIdx]) selectSongById(list[nextIdx].id);
+
+    // Ha van tárolt pozíciónk a setlistában, abból indulunk ki (ez kezeli a duplikált dalokat is!)
+    let curIdx = runtime.currentSetlistIndex !== undefined ? runtime.currentSetlistIndex : list.findIndex(s => String(s.id) === String(runtime.currentSongId));
+    if (curIdx < 0) curIdx = 0;
+
+    let nextIdx = curIdx + dir;
+    if (nextIdx < 0) nextIdx = 0;
+    if (nextIdx >= list.length) nextIdx = list.length - 1; // Megáll a lista végén
+
+    runtime.currentSetlistIndex = nextIdx; // Eltároljuk az új pozíciót
+
+    if (list[nextIdx]) {
+      selectSongById(list[nextIdx].id);
+    }
   }
 
   function stepScrollDown(dir = 1) {
