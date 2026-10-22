@@ -2055,7 +2055,7 @@ body.dark-mode .switch input:checked + .switch-slider {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--border);
-  background: #ef4444;
+  background: var(--bg-card); /* Szolid háttér, soha nem lesz piros alapból */
   user-select: none;
 }
 
@@ -2069,10 +2069,10 @@ body.dark-mode .switch input:checked + .switch-slider {
   top: 0;
   bottom: 0;
   width: 68px;
-  background: #ef4444;
+  background: #ef4444; 
   color: #ffffff;
   border: none;
-  display: flex;
+  display: none; /* <--- EZT ÍRD ÁT IDE (flex helyett none legyen) */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -2094,7 +2094,7 @@ body.dark-mode .switch input:checked + .switch-slider {
 .setlist-swipe-content {
   position: relative;
   z-index: 2;
-  background: var(--bg-sidebar);
+  background: var(--bg-sidebar); /* Szolid háttér, ami tökéletesen elfedi a gombot alaphelyzetben */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2109,21 +2109,29 @@ body.dark-mode .switch input:checked + .switch-slider {
 }
 
 .setlist-swipe-content.active {
-  background: rgba(100, 116, 139, 0.14);
+  background: rgba(100, 116, 139, 0.22) !important;
 }
 
 body.dark-mode .setlist-swipe-content.active {
-  background: rgba(148, 163, 184, 0.16);
+  background: rgba(148, 163, 184, 0.24) !important;
 }
 
 .setlist-swipe-wrapper.swiped-open .setlist-swipe-content {
-  transform: translateX(68px);
+  transform: translateX(68px); /* Csak a szöveges sáv csúszik jobbra, feltárva a piros gombot */
 }
 
 .setlist-swipe-wrapper.dragging-sort {
   opacity: 0.92;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
   z-index: 20;
+}
+
+.setlist-swipe-wrapper.swiped-open .setlist-swipe-delete-btn {
+  display: flex !important;
+}
+
+.setlist-swipe-wrapper.swiped-open .setlist-swipe-content {
+  transform: translateX(68px);
 }
 
 .drag-handle-eq {
