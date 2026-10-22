@@ -1,0 +1,371 @@
+{
+  "songs": [
+    {
+      "id": 1,
+      "title": "Amazing Grace",
+      "altTitle": "Az Úr irgalma végtelen",
+      "artist": "John Newton",
+      "key": "D",
+      "bpm": 78,
+      "timeSig": "3/4",
+      "duration": "3:30",
+      "order": "V1 V2 C V3",
+      "number": "01",
+      "copyright": "Public Domain",
+      "website": "https://youtube.com/results?search_query=Amazing+Grace",
+      "tags": [
+        "Himnusz",
+        "Akusztikus",
+        "Klasszikus"
+      ],
+      "format": "over",
+      "rehearsalNotes": {},
+      "audioMemo": null,
+      "drawingData": null,
+      "content": "Verse 1:\nD             G        D\nAmazing Grace, how sweet the sound,\n                    A7\nthat saved a wretch like me\nD             G        D\nI once was lost, but now am found,\n    Hm      A7       D\nwas blind, but now I see.\n\nVerse 2:\nD                 G        D\n'Twas grace that taught my heart to fear,\n                     A7\nand grace my fears relieved.\nD                G        D\nHow precious did that grace appear,\n    Hm    A7       D\nthe hour I first believed.\n\nChorus:\nG                D/F#\nMy chains are gone, I've been set free,\nEm7              D\nMy God, my Savior has ransomed me.\nG                D/F#\nAnd like a flood His mercy reigns,\nEm7        A7         D\nUnending love, amazing grace.\n\nVerse 3:\nD                  G           D\nWhen we've been there ten thousand years,\nD                      A7\nbright shining as the sun\nD              G             D\nWe've no less days to sing God's praise\n     Hm     A7       D\nthan when we first begun."
+    },
+    {
+      "id": 1792481652264,
+      "title": "Új ének",
+      "altTitle": "",
+      "artist": "Előadó",
+      "key": "D",
+      "bpm": 100,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "order": "V1 C V2 C",
+      "number": "06",
+      "copyright": "",
+      "website": "",
+      "tags": [],
+      "format": "over",
+      "rehearsalNotes": {},
+      "content": "Verse 1:\nD             G        D\nÍrd ide a dalszöveget és az akkordokat...\nHm            G        A\nMagyar Hm és B akkordokkal is működik!\n\nChorus:\nG             D/F#\nRefrén szövege...\nEm7     A7    D\nZáró sor."
+    },
+    {
+      "id": 1792494316739,
+      "title": "Come Thou Fount",
+      "altTitle": "",
+      "artist": "Robert Robinson",
+      "key": "B",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "Verse 1:\n[G]Come Thou Fount of every [D]blessing,\nTune my [C]heart to [D]sing Thy [G]grace;\n[G]Streams of [Em]mercy, never [D]ceasing,\nCall for [C]songs of [D]loudest [G]praise.\n[G]Teach me [Em]some melodious [C]sonnet,\n[G]Sung by f[Em]laming tongues [C]above;\nPraise the [G]mount!  I'm fixed [D]upon it,\n[D]Mount of [C]Thy re[D]deeming [G]love.\n\nVerse 2:\n[G]Here I raise my 'Ebenez[D]er';\nHither b[C]y Thy hel[D]p I'm come;[G]\n[G]And I hope,[Em] by Thy good[D] pleasure,\n[D]Safely to[C] arrive at[D] home. [G]\n[G]Jesus sou[Em]ght me when a s[C]tranger,\n[G]Wandering[Em] from the fold[C] of God;\nHe, to resc[G]ue me from danger,[D]\n[D]Interpose[C]d His[D] precious[G] blood.\n\nVerse 3:\nOh, to[G] grace how great a[D] debtor,\nDaily[C] I'm cons[D]trained to [G]be!\n[G]Let Thy [Em]goodness, like a[D] fetter,\nBind my[C] wand'ring [D]heart to [G]Thee.\n[G]Prone to[Em] wander, Lord, I[C] feel it,\n[G]Prone to[Em] leave the God I l[C]ove;\nHere's my [G]heart, Oh, take an[D]d seal it,\n[D]Seal it f[C]or Thy c[D]ourts a[G]bove.\n\nOutro:\nHere's my h[G]eart, Oh, take an[D]d seal it,\n[D]Seal it f[C]or Thy c[D]ourts ab[G]ove."
+    },
+    {
+      "id": 1792502088445,
+      "title": "Dicsérem én",
+      "altTitle": "",
+      "artist": "",
+      "key": "D",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "(Vamp)\n\n[Hm]   [A]  [G]  [D]     [Hm]   [A]  [G]  [D]  \n\nVerse1:\n\nBensőm üres és kiszáradt; a pusztában minden sivár \nSemmim sincs már, mégis így szól a szám:\nAz Úr az, ki engem megáld\n\nVerse2:\n\nHa hőség emészt el, azt kérem; ha elfogy erőm, és ha fáj \nTűzben próbált arannyá tedd hitem\nPróbák lángja formáljon át\n\nChorus:\nÉs dicsérem [D]én, dicsérem [A]én,\nEllenem [G]készült fegyver mi[D]nd elvész\n[A/C#]Ujjongok [A]majd, hirdetem [Hm]én \nGyőzelem [G]vár, mert Krisztus be[A]nnem él!\t→\tVamp!\n\nVerse3:\n\nA harcban is Hozzá kiáltok, a győzelem úton van már \nKrisztusban győztes és áldott vagyok\nÍgéretén lábam megáll\n\nBridge:\n\n[D]Tél jön, vagy nyár, mit hoz az élet\n[Hm]Ő ugyanaz, zengjen a hálaé[A]nek,[G] szálljon Hozzá a di[D]cséret!"
+    },
+    {
+      "id": 1792502088699,
+      "title": "Add, hogy a szívemmel lássak",
+      "altTitle": "",
+      "artist": "",
+      "key": "E",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "VERSE:\n\n      [E2]Add, hogy a szívemmel lássak,\n      [B/D#]add     nekem látásodat!\n      Uram, hadd [A2/C#]lás  -  sak,\n      [A]   Uram, hadd [E4     ]lássak!  [E]\n\n\nCHORUS:\n\nKérlek, [B]nyisd meg most sze[C#m]mem,\negy [A]pillantást hadd vessek a [Bsus]mennyre,\nhogy [B]valóban lássa-[C#m]lak,\nmiközben [A2]é - nekeljük: [Bsus]szent vagy!\n\n\nBRIDGE:\n\n      [E2]Szent vagy, szent vagy, szent vagy!\n      [B/D#]Szent  vagy, szent vagy, szent vagy!\n      [A2/C#]Szent  vagy, szent vagy, [A]szent vagy!\n      Uram, Te [E4]szent [E]vagy!",
+      "tags": [],
+      "order": "",
+      "number": "",
+      "copyright": "",
+      "website": ""
+    },
+    {
+      "id": 1792502088371,
+      "title": "Legyen úgy",
+      "altTitle": "",
+      "artist": "",
+      "key": "E",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "Intro:\n[E]  [E/G#]     [A]  [C#m]\n\nVerse1:\n[E] Mit is kérhetnék[E/G#], mire vágyhatnék\n[A] Mi az, ami nekem[C#m] jó?\n\nVerse2:\n[E] Ami tényleg kell[E/G#], mindent elvégzel\n[A] Még ha számon sincs a s[C#m]zó\n\nChorus1:\nAhogy Te [A]látod, ahogy Te [E/G#]várod\nAhogy Te [C#m]kéred, minden úgy legyen, [E/G#]Uram\nAz élet[A]emmel, a terve[B]immel\nMinden legyen úgy, [E]Uram\n\nVerse3:\nTúl a próbákon, nehéz órákon\nA Te ügyed szolgálom\nVerse4:\nAmit vársz tőlem, mindazt elvégzem\nVagy legalábbis próbálom\n\nBridge:\nÉs ha [A]hűséggel járok, hiszem, [E]eljön majd az órám\nHogy az [C#m]Úr örömmel néz rám, és sokra [E]bíz majd ezután\nÉs lesz ott [A]ünnep a fényben, majd az[E/G#] örök békességben\nAhol [C#m7]Isten lesz mindenben a [E]mindenség Ura\n\n\nInstrumental:\n[A]  [F#m]    [E]  [C#m]\n[A]  [B]  [C#m]    [E]\n\nChorus2:\nAhogy Te [A]látod, ahogy Te [F#m7]várod\nAhogy Te [E]kéred, minden úgy legyen[C#m7], Uram\nAz élet[A]emmel, a terve[B]immel\nMinden legyen úgy, [E]Uram\n\n(Refrain)\nMert oly [A]szent vagy, [F#m7]szent vagy\nSzí[E]vem kiált,[C#m7] szent vagy\nUgyanú[A]gy, mint a m[B]ennyben\nÚgy bennem [E]is\n\nZengjük, szent vagy, szent vagy Szívünk kiált, szent vagy\nUgyanúgy, mint a mennyben A földön is"
+    },
+    {
+      "id": 1792502088203,
+      "title": "Tiéd A Dicsőség",
+      "altTitle": "",
+      "artist": "",
+      "key": "C",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "INTRO:\n[C]   [Am]    [F]  [Dm]   [G]\n\nVERSE:\n\nTiéd a dics[C]őség, és i[Em]mádat\nFelem[F]eljük kezeinket és dics[Dm]érjük szent Ne[G]ved.\n\nCHORUS:\n\nÓ, hatalm[C]as kezed nagy csodákat [Am]tesz\nVeled senki nem ér f[F]el, Veled s[Dm]enki nem ér f[G]el\n\nTAG:\n\nÓ hatalm[C]as, ó hatal[Am]mas, ó hatal[Dm]mas[G], ó hatalm[C]as\nÓ hatalm[Am]as, ó hatal[Dm]mas, ó hatal[G]mas[C]"
+    },
+    {
+      "id": 1792502088585,
+      "title": "Hiszem (Véred megnyitja szemem)",
+      "altTitle": "",
+      "artist": "",
+      "key": "G",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "Intro:\n[Am7]    [C2]   [G]  [D/F#]\n\nVerse1:\n\nVé[G]red megnyitja szem[C2]em – épp most.\nVé[G]red átkokat tör [C2]meg – épp most.\nV[Am7]éred gyógyít, felé[C2]pít – épp most.\nVé[G]red láncokat sza[D/F#]kít – épp most.\n\nChorus:\n\nÉs [Am7]én ma is his[C2]zem, hogy Benned [G]nincs változás,\nUgya[D/F#]naz vagy mindörökké.\n[Am7]És én ma is[C2] hiszem,\nHogy a Te szent [G]véred elég [D/F#]nekem.\n\nVerse2:\nVéred megtört szívekre hull – épp most.\nVéred segít megbocsátanom - épp most.\nVéred értelmem mossa át – épp most.\nVéred adhat feltámadást – épp most.\n\nBridge:\nTe vagy [Em]Isten a Mennyben, [D2/F#]Úr minden felett.\nA b[G]űn törtvénye helyett a szaba[Asus]dság!"
+    },
+    {
+      "id": 1792502088448,
+      "title": "Fenségednél nincs vonzóbb",
+      "altTitle": "",
+      "artist": "",
+      "key": "G",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "Verse:\n\n[G]Fenségednél nincs vonzóbb e[C/G] Föl[G]dön,\nSe [C/G]dal, se [D/G]szó, se [G]kép,\nÉs [G]nem találnék [C/G]Nálad sz[G]ebbet,\n[C]Bármerre is indul[D]nék.\n\nBenned [Em7]van a szeretet f[C]énye,\nCsak Te [Am7m]vagy az egyetlen [D4]út.[D]\nBenned[G] ott találok minden[C/G] vála[G]szt,\n[G/B]Nagy Ki[C]rály és [D4]győ[D]ztes [G]Úr.\n\nChorus:\n[G4]Most csak[G] nézlek,[D/G] és csod[C/G]állak,\nÉs [G]tiszta [D/G]szívből ál[C/G]dlak,\nMinden [Em7]tisztel[D/F#]et csak Ho[C]zzád sz[Am7]áll,\n[C]Imádlak[D] hű A[G]tyám!\n\nChorus v2:\n\n[G4]Most csak[G] nézlek,[D] és cs[C]odállak,\nÉs [G]tiszta [D]szívből [C]áldlak,\nMinden [Em7]tisztel[D/F#]et csak Ho[C]zzád sz[Am7]áll,\n[C]Imádlak[D] hű A[G]tyám!"
+    },
+    {
+      "id": 1792502088256,
+      "title": "Emlékezzél meg",
+      "altTitle": "",
+      "artist": "",
+      "key": "D",
+      "bpm": 95,
+      "timeSig": "4/4",
+      "duration": "3:30",
+      "format": "chordpro",
+      "content": "[D]Emlékezzél meg az Úr jósá-[G6/D]gá   -  [G/D]ról!     \n[D]Emlékezzél meg oltalmá[F#m]ról!\nMert o-[Gmaj7]lyan magas, mint az [F#m7]ég   \nhű[Em7]sé-ge és megtartó kegyelme [D/A]hoz - [A]zánk.\n[Gmaj7]Nagy az Ő kegyel[Em7]me nép[A/D]e iránt[D].   \n\n\n\n[D]Viharokban Ő erős [G6/D]vá  -  [G/D]runk,   \n[D]mikor szélvész dúl, karjába [F#m]zár.\nAmilyen [Gmaj7]tá - vol van napke[F#m7]let, \noly [Em7]messze veti el tőlünk bűne[D/A]in  -  [A]ket.\n[Gmaj7]Nem  fogy el irgal[Em7]ma nép[A/D]e iránt[D]."
+    }
+  ],
+  "setlists": [
+    {
+      "id": "set_1792485020257",
+      "name": "Új Próba",
+      "date": "2026-10-20",
+      "targetMinutes": 45,
+      "songIds": [
+        1792502088256,
+        1792502088448,
+        1792502088585,
+        1792502088445,
+        1,
+        1792494316739,
+        1792502088445
+      ]
+    },
+    {
+      "id": "set_1",
+      "name": "Vasárnapi Akusztikus Szett",
+      "date": "2026-10-25",
+      "targetMinutes": 20,
+      "songIds": [
+        1
+      ]
+    },
+    {
+      "id": "set_2",
+      "name": "Esti Klubkoncert & Próba",
+      "date": "2026-10-30",
+      "targetMinutes": 45,
+      "songIds": [
+        1,
+        1792494316739,
+        1792481652264
+      ]
+    }
+  ],
+  "settings": {
+    "darkMode": false,
+    "highContrast": false,
+    "hideTopbarMode": "never",
+    "topbarLine1": "title",
+    "topbarLine2": "nextSong",
+    "topbarLine3": "clock",
+    "compactSidebar": false,
+    "numberSongsInLists": true,
+    "touchZonesEnabled": false,
+    "swipePageTurn": true,
+    "webSearchProvider": "YouTube",
+    "showHelpBadges": false,
+    "stageDimmerIdle": false,
+    "notation": "hu",
+    "bNoteInputMode": "auto",
+    "pageLayout": "auto",
+    "longLinesBehavior": "shrink",
+    "warnTabsOnTranspose": true,
+    "accidentalsOverride": {
+      "A#": "auto",
+      "C#": "auto",
+      "D#": "auto",
+      "F#": "auto",
+      "G#": "auto"
+    },
+    "pdfLayout": "default",
+    "pdfQuality": "medium",
+    "pdfInvertColors": false,
+    "pdfAutoCrop": true,
+    "formatting": {
+      "titleEnabled": true,
+      "titleSize": 33,
+      "titleColor": "default",
+      "metaSize": 20,
+      "metaColor": "default",
+      "showSubtitle": true,
+      "showArtist": true,
+      "showKey": true,
+      "showTempo": true,
+      "showTimeSig": true,
+      "showNextSong": true,
+      "lyricsSize": 39,
+      "lyricsColor": "default",
+      "headingsEnabled": true,
+      "headingSize": 19,
+      "headingColor": "default",
+      "headingHighlight": "transparent",
+      "chordSize": 40,
+      "chordColor": "#0b5bb5",
+      "chordBold": true,
+      "chordItalic": false,
+      "chordHighlight": "transparent",
+      "notesColor": "#64748b",
+      "notesBold": false,
+      "notesItalic": true,
+      "hideParensInChordLines": false,
+      "sheetBgColor": "#d3e5eb",
+      "sectionStyles": [
+        {
+          "id": "sec_verse",
+          "name": "Verse",
+          "font": "Alapértelmezett",
+          "color": "default",
+          "bold": false,
+          "italic": false,
+          "indent": false
+        },
+        {
+          "id": "sec_chorus",
+          "name": "Chorus",
+          "font": "Alapértelmezett",
+          "color": "default",
+          "bold": true,
+          "italic": false,
+          "indent": true
+        },
+        {
+          "id": "sec_bridge",
+          "name": "Bridge",
+          "font": "Alapértelmezett",
+          "color": "default",
+          "bold": false,
+          "italic": true,
+          "indent": false
+        }
+      ]
+    },
+    "fabButtons": [
+      "zoom",
+      "scroll",
+      "draw",
+      "metronome",
+      "nextSong",
+      "pageDown"
+    ],
+    "metronomeFlashTopbar": true,
+    "metronomeSoundEnabled": true,
+    "metronomeAutoOff": "never",
+    "introSilentFlashBars": 0,
+    "defaultSongLengthSec": 90,
+    "autoScrollDelaySec": 0,
+    "autoScrollOvershoot": false,
+    "unifiedFreehandNotes": true,
+    "defaultBackingTrack": false,
+    "audioRouting": {
+      "clickChannel": "0",
+      "cueChannel": "1",
+      "padChannelPair": "2-3",
+      "padCharacter": "strings",
+      "padFadeTime": 2.8,
+      "grooveStyle": "click",
+      "countInEnabled": true
+    },
+    "pedalBindings": [
+      {
+        "id": "p1",
+        "action": "nextPage",
+        "label": "Következő oldal / ének",
+        "key": ">"
+      },
+      {
+        "id": "p2",
+        "action": "prevPage",
+        "label": "Előző oldal / ének",
+        "key": "<"
+      },
+      {
+        "id": "p3",
+        "action": "scrollDown",
+        "label": "Görgetés lefele",
+        "key": "v"
+      },
+      {
+        "id": "p4",
+        "action": "scrollUp",
+        "label": "Görgetés felfele",
+        "key": "^"
+      },
+      {
+        "id": "p5",
+        "action": "zoomIn",
+        "label": "Nagyítás",
+        "key": "="
+      },
+      {
+        "id": "p6",
+        "action": "zoomOut",
+        "label": "Kicsinyítés",
+        "key": "-"
+      },
+      {
+        "id": "p7",
+        "action": "zoomReset",
+        "label": "Nagyítás visszaállítása",
+        "key": "0"
+      },
+      {
+        "id": "p8",
+        "action": "fitPage",
+        "label": "Oldalhoz igazítás",
+        "key": "9"
+      }
+    ],
+    "pedalScrollPercent": 50,
+    "midiEnabled": false,
+    "midiSendPatchOnSongChange": false,
+    "webcamGestureEnabled": false,
+    "instrument": "Gitár",
+    "tuning": "Standard",
+    "showChordDiagramsInline": false,
+    "leftHandedChords": false,
+    "knownChords": [],
+    "printFontSize": "12 pt",
+    "printUrlLink": true,
+    "printColor": false,
+    "printChordDiagrams": false,
+    "printSongNumbers": false,
+    "printTabletFormat": false,
+    "printPaperSize": "A4",
+    "autoBackupWeekly": true,
+    "exportWithBackingTracks": false,
+    "onlineSyncEnabled": false,
+    "cloudProvider": "",
+    "syncFrequency": "manual",
+    "theme": "default"
+  }
+}
