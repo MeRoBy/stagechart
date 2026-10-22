@@ -1916,11 +1916,13 @@ window.StageChartUI = (function () {
         </div>
       `;
 
-      // Oldalra húzás (Swipe) a piros "Törlés" gomb megjelenítéséhez (egérrel és érintőképernyőn is!)
+// Oldalra húzás (Swipe) a piros "Törlés" gomb megjelenítéséhez (egérrel és mobil érintéssel is)
       let startX = 0;
       let startY = 0;
       let swiping = false;
       let movedHoriz = false;
+
+      content.style.touchAction = 'pan-y'; // Megakadályozza, hogy a mobil böngésző összezavarja a vízszintes húzást
 
       content.addEventListener('pointerdown', (e) => {
         if (e.target.closest('.drag-handle-eq')) return;
@@ -1928,25 +1930,35 @@ window.StageChartUI = (function () {
         startY = e.clientY;
         swiping = true;
         movedHoriz = false;
+        try { content.setPointerCapture(e.pointerId); } catch(err) {}
       });
 
       content.addEventListener('pointermove', (e) => {
         if (!swiping) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        if (Math.abs(dx) > 35 && Math.abs(dx) > Math.abs(dy)*1.5) {
+        if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.3) {
           movedHoriz = true;
-          if (dx > 40) {
+          if (dx > 35) {
             // Más nyitott sorok bezárása
             frameBox.querySelectorAll('.setlist-swipe-wrapper.swiped-open').forEach(w => {
               if (w !== wrapper) w.classList.remove('swiped-open');
             });
             wrapper.classList.add('swiped-open');
-          } else if (dx < -30) {
+          } else if (dx < -25) {
             wrapper.classList.remove('swiped-open');
           }
         }
       });
+
+      const endSwipe = (e) => {
+        if (swiping) {
+          swiping = false;
+          try { content.releasePointerCapture(e.pointerId); } catch(err) {}
+        }
+      };
+      content.addEventListener('pointerup', endSwipe);
+      content.addEventListener('pointercancel', endSwipe);
 
       window.addEventListener('pointerup', () => {
         swiping = false;
